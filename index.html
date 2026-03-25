@@ -153,6 +153,10 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+    @keyframes badge-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .hero-badge {
       display: flex;
       align-items: center;
@@ -164,6 +168,14 @@
       font-weight: 500;
       color: rgba(255,255,255,0.7);
       letter-spacing: 0.01em;
+      opacity: 0;
+      animation: badge-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hero-badge:nth-child(1) { animation-delay: 0.55s; }
+    .hero-badge:nth-child(2) { animation-delay: 0.7s; }
+    .hero-badge:nth-child(3) { animation-delay: 0.85s; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-badge { animation: none; opacity: 1; }
     }
     .hero-badge svg { color: var(--cyan); flex-shrink: 0; }
     .hero-scroll-hint {
@@ -700,12 +712,45 @@
     /* ─── BELOW FOLD SECTIONS ─────────────────────────── */
     .section-below {
       opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(32px) scale(0.98);
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .section-below.visible {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
+    }
+
+    /* Staggered entrances for privacy items and feature cards */
+    @keyframes item-rise {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes card-rise {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #privacy.visible .privacy-item:nth-child(1) {
+      animation: item-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+    }
+    #privacy.visible .privacy-item:nth-child(2) {
+      animation: item-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+    }
+    #privacy.visible .privacy-item:nth-child(3) {
+      animation: item-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both;
+    }
+    #features.visible .feature-card:nth-child(1) {
+      animation: card-rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+    }
+    #features.visible .feature-card:nth-child(2) {
+      animation: card-rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both;
+    }
+    #features.visible .feature-card:nth-child(3) {
+      animation: card-rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #privacy.visible .privacy-item,
+      #features.visible .feature-card { animation: none; opacity: 1; transform: none; }
     }
 
     /* PRIVACY */
@@ -992,8 +1037,20 @@
       color: #888;
       text-decoration: none;
       transition: color 0.2s ease;
+      position: relative;
+    }
+    .footer-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0%;
+      height: 1px;
+      background: var(--blue);
+      transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .footer-nav a:hover { color: var(--blue); }
+    .footer-nav a:hover::after { width: 100%; }
     .footer-bottom {
       display: flex;
       align-items: center;
@@ -1412,14 +1469,14 @@
     const isMobile = window.innerWidth < 768;
     const tagScale = isMobile ? 0.55 : 1;
     const tagData = [
-      { label: 'rock climbing · 5', ax: -220, ay: -100 },
-      { label: 'jazz · 4',          ax:  -60, ay: -170 },
-      { label: 'philosophy · 3',    ax:  160, ay: -130 },
-      { label: 'photography · 4',   ax:  230, ay:   10 },
-      { label: 'cooking · 3',       ax:  175, ay:  130 },
-      { label: 'travel · 5',        ax:  -40, ay:  175 },
-      { label: 'meditation · 2',    ax: -200, ay:  115 },
-      { label: 'architecture · 3',  ax: -230, ay:   -5 },
+      { label: 'rock climbing · 5', ax: -220, ay: -100, rot:  -7 },
+      { label: 'jazz · 4',          ax:  -60, ay: -170, rot:   4 },
+      { label: 'philosophy · 3',    ax:  160, ay: -130, rot:  -5 },
+      { label: 'photography · 4',   ax:  230, ay:   10, rot:   6 },
+      { label: 'cooking · 3',       ax:  175, ay:  130, rot:  -4 },
+      { label: 'travel · 5',        ax:  -40, ay:  175, rot:   5 },
+      { label: 'meditation · 2',    ax: -200, ay:  115, rot:  -6 },
+      { label: 'architecture · 3',  ax: -230, ay:   -5, rot:   3 },
     ];
     const tagsContainer = document.getElementById('tags-container');
     const tagEls = tagData.map(t => {
@@ -1458,6 +1515,9 @@
     const s6Sub        = document.getElementById('s6-sub');
     const progressBar  = document.getElementById('story-progress');
     const progressFill = document.getElementById('story-progress-fill');
+    const s1Eyebrow    = document.getElementById('s1-eyebrow');
+    const s1Headline   = document.getElementById('s1-headline');
+    const s1Sub        = document.getElementById('s1-sub');
 
     const SCENES = [
       { el: scene1, start: 0.00, end: 0.15 },
@@ -1503,7 +1563,21 @@
       bgWhite.style.opacity = toWhite;
       bgGrid.style.opacity  = remap(p, 0.62, 0.68) * (1 - remap(p, 0.78, 0.84)) * 0.55;
 
-      // ── Scene 2: device tilt (mouse-driven, smoothed) ─
+      // ── Scene 1: text staggered entrance ────────────
+      if (!prefersReducedMotion) {
+        const s1eyeP = easeOut(remap(p, 0.005, 0.06));
+        const s1hdP  = easeOut(remap(p, 0.02,  0.08));
+        const s1subP = easeOut(remap(p, 0.04,  0.10));
+        s1Eyebrow.style.opacity   = s1eyeP;
+        s1Eyebrow.style.transform = `translateY(${(1 - s1eyeP) * 14}px)`;
+        s1Headline.style.opacity  = s1hdP;
+        s1Headline.style.transform = `translateY(${(1 - s1hdP) * 20}px)`;
+        s1Sub.style.opacity       = s1subP;
+        s1Sub.style.transform     = `translateY(${(1 - s1subP) * 14}px)`;
+      }
+
+      // ── Scene 2: device tilt + scale entrance ───────
+      const deviceEnterP = easeOut(remap(p, 0.15, 0.23));
       if (!isCoarse && !prefersReducedMotion) {
         const rect = deviceCard.getBoundingClientRect();
         const dcx  = rect.left + rect.width  / 2;
@@ -1516,7 +1590,11 @@
           : 0;
         tiltRY += (targetRY - tiltRY) * 0.08;
         tiltRX += (targetRX - tiltRX) * 0.08;
-        deviceCard.style.transform = `perspective(900px) rotateY(${tiltRY}deg) rotateX(${tiltRX}deg)`;
+        const deviceScale = 0.82 + 0.18 * deviceEnterP;
+        deviceCard.style.transform = `perspective(900px) rotateY(${tiltRY}deg) rotateX(${tiltRX}deg) scale(${deviceScale})`;
+      } else {
+        const deviceScale = 0.82 + 0.18 * deviceEnterP;
+        deviceCard.style.transform = `scale(${deviceScale})`;
       }
 
       // ── Scene 3: interest tag explosion ─────────────
@@ -1524,18 +1602,18 @@
       tagEls.forEach((el, i) => {
         const delay  = i * 0.07;
         const tp     = easeOut(clamp((s3p - delay) / 0.4, 0, 1));
-        // Tags move from center outward (fixed-px offsets, scaled for mobile)
-        const { ax, ay } = tagData[i];
+        // Tags move from center outward with per-tag rotation
+        const { ax, ay, rot } = tagData[i];
         const tx = ax * tagScale * tp;
         const ty = ay * tagScale * tp;
         el.style.opacity   = tp;
-        el.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${0.6 + 0.4*tp})`;
+        el.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${0.6 + 0.4*tp}) rotate(${rot * tp}deg)`;
       });
 
       // ── Scene 4: mission card ────────────────────────
       const s4p = easeOut(remap(p, 0.46, 0.55));
       missionCard.style.opacity   = s4p;
-      missionCard.style.transform = `translateY(${(1-s4p)*40}px)`;
+      missionCard.style.transform = `translateY(${(1-s4p)*40}px) rotate(${(1-s4p)*2.5}deg)`;
 
       // ── Scene 5: dots convergence ────────────────────
       const s5p = remap(p, 0.60, 0.76);
