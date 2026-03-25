@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serendipity — Meet Who You Were Meant to Meet</title>
+  <meta name="description" content="Serendipity is a privacy-first wearable that helps you discover meaningful people nearby through on-device AI and guided daily missions.">
+  <meta name="theme-color" content="#1e3a8a">
+  <meta property="og:title" content="Serendipity — Meet Who You Were Meant to Meet">
+  <meta property="og:description" content="A privacy-first wearable that helps meaningful connections happen naturally.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serendipity.example">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Serendipity — Meet Who You Were Meant to Meet">
+  <meta name="twitter:description" content="A privacy-first wearable that helps meaningful connections happen naturally.">
+  <link rel="canonical" href="https://serendipity.example">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231e3a8a'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2300c1d4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:  #ffffff;
+      --dark:   #333333;
+      --blue:   #1e3a8a;
+      --cyan:   #00c1d4;
+      --gray:   #e0e0e0;
+      --focus:  #0ea5e9;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      overflow-x: hidden;
+      cursor: auto;
+    }
+    body.custom-cursor { cursor: none; }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -48px;
+      z-index: 2000;
+      padding: 10px 14px;
+      background: var(--white);
+      color: var(--blue);
+      border: 2px solid var(--focus);
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus-visible { top: 12px; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    a, button, input { cursor: pointer; }
+    body.custom-cursor a,
+    body.custom-cursor button,
+    body.custom-cursor .feature-card { cursor: none; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    /* ─── QUICK VALUE HERO ───────────────────────────── */
+    #hero-intro {
+      padding: 120px 48px 72px;
+      background:
+        radial-gradient(1200px 500px at 12% -10%, rgba(0,193,212,0.2), transparent 55%),
+        linear-gradient(160deg, #102b75 0%, #1e3a8a 50%, #193274 100%);
+      color: var(--white);
+      text-align: center;
+    }
+    #hero-intro h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .hero-sub {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: clamp(1rem, 1.7vw, 1.2rem);
+      line-height: 1.7;
+      color: rgba(255,255,255,0.78);
+    }
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-btn {
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 12px 22px;
+      border-radius: 999px;
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .hero-btn.primary {
+      background: var(--cyan);
+      border-color: transparent;
+    }
+    .hero-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.14);
+    }
+    .hero-btn.primary:hover { background: #11d7ea; }
+    .hero-trust {
+      margin-top: 18px;
+      font-size: 0.87rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 700px) {
+      #hero-intro { padding: 104px 24px 56px; }
+    }
+
+    /* ─── CUSTOM CURSOR ──────────────────────────────── */
+    #cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cyan);
+      pointer-events: none;
+      z-index: 9999;
+      top: 0; left: 0;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+      mix-blend-mode: difference;
+      transition: width 0.2s, height 0.2s, background 0.2s;
+    }
+    #cursor.hover {
+      width: 40px; height: 40px;
+      background: rgba(0,193,212,0.2);
+    }
+    @media (pointer: coarse) {
+      #cursor { display: none; }
+      body { cursor: auto; }
+    }
+
+    /* ─── NAV ────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 22px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.5s ease, box-shadow 0.5s ease;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--gray);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      transition: color 0.5s ease;
+    }
+    nav.scrolled .nav-logo { color: var(--blue); }
+    .nav-cta {
+      background: var(--cyan);
+      color: var(--white);
+      border: none;
+      padding: 10px 26px;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .nav-cta::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transition: left 0.5s ease;
+    }
+    .nav-cta:hover::after { left: 160%; }
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(0,193,212,0.45);
+    }
+    @media (max-width: 600px) {
+      nav { padding: 18px 24px; }
+    }
+
+    /* ─── STORY WRAPPER ──────────────────────────────── */
+    #story-wrapper {
+      position: relative;
+      height: 600vh;
+    }
+    #story-canvas {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      background: var(--blue);
+    }
+
+    /* ─── BACKGROUND LAYERS ──────────────────────────── */
+    #bg-blue {
+      position: absolute; inset: 0;
+      background: var(--blue);
+    }
+    #bg-white {
+      position: absolute; inset: 0;
+      background: var(--white);
+      opacity: 0;
+    }
+    #bg-grid {
+      position: absolute; inset: 0;
+      opacity: 0;
+      background-image:
+        linear-gradient(var(--gray) 1px, transparent 1px),
+        linear-gradient(90deg, var(--gray) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ─── SCENES ─────────────────────────────────────── */
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity;
+    }
+
+    /* ─── SCENE 1 ─────────────────────────────────────── */
+    #scene-1 .scene-copy {
+      text-align: center;
+      color: var(--white);
+      z-index: 2;
+      max-width: 800px;
+      padding: 0 32px;
+    }
+    #s1-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 20px;
+    }
+    #s1-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    #s1-sub {
+      margin: 22px auto 0;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      max-width: 480px;
+      line-height: 1.65;
+    }
+    .s1-particle {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      opacity: 0.5;
+    }
+
+    /* ─── SCENE 2 ─────────────────────────────────────── */
+    #scene-2 {
+      gap: 80px;
+      flex-direction: row;
+      padding: 0 80px;
+    }
+    #scene-2 .scene-copy {
+      color: var(--white);
+      max-width: 400px;
+    }
+    #device-card {
+      width: 200px;
+      height: 320px;
+      background: linear-gradient(145deg, #0d2260, #1e3a8a);
+      border: 1px solid rgba(0,193,212,0.35);
+      border-radius: 28px;
+      box-shadow: 0 0 80px rgba(0,193,212,0.18), 0 24px 60px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 20px;
+      flex-shrink: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: box-shadow 0.3s ease;
+    }
+    #device-card:hover {
+      box-shadow: 0 0 120px rgba(0,193,212,0.3), 0 40px 80px rgba(0,0,0,0.5);
+    }
+    .device-led {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      animation: pulse-led 2s ease-in-out infinite;
+    }
+    @keyframes pulse-led {
+      0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--cyan); }
+      50% { opacity: 0.4; box-shadow: 0 0 4px var(--cyan); }
+    }
+    .device-screen {
+      width: 100%;
+      background: rgba(0,193,212,0.06);
+      border: 1px solid rgba(0,193,212,0.15);
+      border-radius: 12px;
+      padding: 12px;
+      flex: 1;
+      margin: 12px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+    .device-line {
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(0,193,212,0.3);
+      animation: blink-line 1.5s ease-in-out infinite;
+    }
+    .device-line:nth-child(1) { width: 80%; animation-delay: 0s; }
+    .device-line:nth-child(2) { width: 60%; animation-delay: 0.2s; }
+    .device-line:nth-child(3) { width: 70%; animation-delay: 0.4s; }
+    .device-line:nth-child(4) { width: 45%; animation-delay: 0.6s; }
+    @keyframes blink-line {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .device-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(0,193,212,0.7);
+      text-align: center;
+    }
+    #scene-2 .scene-copy .s-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 18px;
+    }
+    #scene-2 .scene-copy h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      margin-bottom: 18px;
+    }
+    #scene-2 .scene-copy p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+    @media (max-width: 768px) {
+      #scene-2 { flex-direction: column; gap: 36px; padding: 0 24px; }
+      #device-card { width: 160px; height: 250px; }
+      #scene-2 .scene-copy { text-align: center; }
+    }
+
+    /* ─── SCENE 3 ─────────────────────────────────────── */
+    #scene-3 .scene-copy {
+      text-align: center;
+      color: var(--white);
+      z-index: 10;
+      position: relative;
+    }
+    #scene-3 .scene-copy h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.18;
+    }
+    #tags-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .interest-tag {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: rgba(0,193,212,0.12);
+      border: 1px solid rgba(0,193,212,0.55);
+      color: var(--cyan);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+      will-change: transform, opacity;
+      box-shadow: 0 0 20px rgba(0,193,212,0.1);
+    }
+
+    /* ─── SCENE 4 ─────────────────────────────────────── */
+    #scene-4 {
+      flex-direction: column;
+      gap: 48px;
+    }
+    #scene-4 .scene-copy {
+      text-align: center;
+      color: var(--dark);
+    }
+    #scene-4 .scene-copy h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.18;
+    }
+    #mission-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 36px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 20px 60px rgba(30,58,138,0.12);
+      max-width: 360px;
+      width: 90%;
+      border: 1px solid rgba(30,58,138,0.08);
+      transform: translateY(40px);
+      opacity: 0;
+    }
+    .mission-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 14px;
+    }
+    .mission-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .mission-meta {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--gray);
+      font-size: 0.78rem;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mission-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+    }
+
+    /* ─── SCENE 5 ─────────────────────────────────────── */
+    #scene-5 { flex-direction: column; gap: 48px; }
+    #scene-5 .scene-copy {
+      text-align: center;
+      color: var(--dark);
+    }
+    #scene-5 .scene-copy h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.22;
+    }
+    #dots-arena {
+      position: relative;
+      width: 320px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+    }
+    .dot-person {
+      position: absolute;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 24px rgba(0,193,212,0.7), 0 0 60px rgba(0,193,212,0.3);
+      top: 50%;
+      transform: translateY(-50%);
+      will-change: transform;
+    }
+    #dot-a { left: 10px; }
+    #dot-b { right: 10px; }
+    #dot-burst {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 0; height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,193,212,0.5) 0%, transparent 70%);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    #scene-5 .scene-copy p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(51,51,51,0.65);
+      line-height: 1.7;
+      margin-top: 12px;
+      max-width: 440px;
+    }
+
+    /* ─── SCENE 6 ─────────────────────────────────────── */
+    #scene-6 { flex-direction: column; }
+    #s6-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--blue);
+      line-height: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #s6-title span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(24px);
+      will-change: transform, opacity;
+    }
+    #s6-sub {
+      margin-top: 28px;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 300;
+      color: rgba(51,51,51,0.55);
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transform: translateY(16px);
+      will-change: transform, opacity;
+      text-align: center;
+    }
+
+    /* ─── BELOW FOLD SECTIONS ─────────────────────────── */
+    .section-below {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .section-below.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* PRIVACY */
+    #privacy {
+      background: var(--blue);
+      padding: 100px 48px;
+      text-align: center;
+    }
+    #privacy .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 18px;
+    }
+    #privacy h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.03em;
+      margin-bottom: 60px;
+      line-height: 1.15;
+    }
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .privacy-item {
+      text-align: center;
+    }
+    .privacy-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: rgba(0,193,212,0.12);
+      border: 1px solid rgba(0,193,212,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.25rem;
+    }
+    .privacy-item h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .privacy-item p {
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+    @media (max-width: 768px) {
+      #privacy { padding: 80px 24px; }
+      .privacy-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    /* FEATURES */
+    #features {
+      padding: 100px 48px;
+      background: var(--white);
+    }
+    #features .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    #features .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 16px;
+    }
+    #features h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--gray);
+      border-radius: 20px;
+      padding: 36px 32px;
+      transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: pointer;
+    }
+    .feature-card:hover {
+      box-shadow: 0 16px 60px rgba(30,58,138,0.12), 0 0 0 1px rgba(30,58,138,0.08);
+      border-color: transparent;
+    }
+    .feature-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gray);
+      margin-bottom: 18px;
+      line-height: 1;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: #777;
+      line-height: 1.7;
+    }
+    @media (max-width: 768px) {
+      #features { padding: 80px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    /* WAITLIST */
+    #waitlist {
+      background: var(--blue);
+      padding: 120px 48px;
+      text-align: center;
+    }
+    #waitlist .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 18px;
+    }
+    #waitlist h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+      margin-bottom: 16px;
+    }
+    #waitlist .waitlist-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 44px;
+      line-height: 1.65;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+    .waitlist-field {
+      text-align: left;
+      width: 100%;
+    }
+    .waitlist-input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.4); }
+    .waitlist-input:focus {
+      border-color: var(--cyan);
+      background: rgba(255,255,255,0.12);
+    }
+    .waitlist-note {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.5;
+    }
+    .waitlist-status {
+      min-height: 1.5em;
+      margin-top: 14px;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .waitlist-status.success { color: #7df7bf; }
+    .waitlist-status.error { color: #ffd0d0; }
+    .waitlist-status.loading { color: #9fe8f0; }
+    .waitlist-btn {
+      background: var(--cyan);
+      color: var(--white);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      animation: btn-pulse 3s ease-in-out infinite;
+    }
+    .waitlist-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transition: left 0.5s ease;
+    }
+    .waitlist-btn:hover::after { left: 160%; }
+    .waitlist-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(0,193,212,0.5);
+    }
+    @keyframes btn-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,193,212,0); }
+      50% { box-shadow: 0 0 0 8px rgba(0,193,212,0.15); }
+    }
+    @media (max-width: 600px) {
+      #waitlist { padding: 80px 24px; }
+      .waitlist-form { flex-direction: column; max-width: 320px; }
+      .waitlist-btn { width: 100%; }
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--white);
+      border-top: 1px solid var(--gray);
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: -0.02em;
+    }
+    footer p {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 28px 24px; }
+    }
+
+    /* ─── REDUCED MOTION ─────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .device-led, .device-line, .waitlist-btn { animation: none; }
+      .scene { transition: none; }
+      #scene-1 .scene-copy *, #s1-eyebrow, #s1-headline, #s1-sub,
+      #s6-title span, #s6-sub, #mission-card { transition: none; }
+    }
+  </style>
+</head>
+<body id="top">
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <noscript>
+    <style>
+      #cursor { display: none !important; }
+      #story-wrapper { height: auto !important; }
+      #story-canvas { position: relative !important; height: auto !important; min-height: 100vh; }
+      .scene { position: relative !important; opacity: 1 !important; filter: none !important; padding: 64px 0; }
+    </style>
+  </noscript>
+
+  <div id="cursor"></div>
+
+  <nav id="nav">
+    <a href="#top" class="nav-logo">Serendipity</a>
+    <button id="nav-cta" class="nav-cta" type="button">
+      Join the Waitlist
+    </button>
+  </nav>
+
+  <main id="main-content">
+    <section id="hero-intro" aria-labelledby="hero-title">
+      <h1 id="hero-title">Meet who you were meant to meet.</h1>
+      <p class="hero-sub">Serendipity is a privacy-first wearable that learns your interests on-device, then creates small daily missions that make meaningful encounters feel natural.</p>
+      <div class="hero-actions">
+        <a class="hero-btn primary" id="hero-cta" href="#waitlist">Request Early Access</a>
+        <a class="hero-btn" href="#features">See How It Works</a>
+      </div>
+      <p class="hero-trust">No ads. No cloud recordings. No social profile required.</p>
+    </section>
+
+    <!-- ── STICKY STORY ───────────────────────────── -->
+    <div id="story-wrapper">
+      <div id="story-canvas">
+        <!-- Background layers -->
+        <div id="bg-blue"></div>
+        <div id="bg-white"></div>
+        <div id="bg-grid"></div>
+
+        <!-- SCENE 1: The Problem -->
+        <div class="scene" id="scene-1">
+          <div id="s1-particles"></div>
+          <div class="scene-copy">
+            <span id="s1-eyebrow">Wearable · AI · Private</span>
+            <h2 id="s1-headline">You've walked past them<br>a thousand times.</h2>
+            <p id="s1-sub">The people who'd change your life are already around you. You just haven't met them yet.</p>
+          </div>
+        </div>
+
+        <!-- SCENE 2: The Device -->
+        <div class="scene" id="scene-2">
+          <div id="device-card">
+            <div class="device-led"></div>
+            <div class="device-screen">
+              <div class="device-line"></div>
+              <div class="device-line"></div>
+              <div class="device-line"></div>
+              <div class="device-line"></div>
+            </div>
+            <span class="device-label">Processing locally</span>
+          </div>
+          <div class="scene-copy">
+            <span class="s-eyebrow">Wear it. Forget it.</span>
+            <h2>Serendipity learns<br>who you are.</h2>
+            <p>A small device worn throughout your day.<br>Every conversation stays local — never uploaded, never seen.</p>
+          </div>
+        </div>
+
+        <!-- SCENE 3: Interest Explosion -->
+        <div class="scene" id="scene-3">
+          <div id="tags-container"></div>
+          <div class="scene-copy">
+            <h2>Everything you love,<br>mapped.</h2>
+          </div>
+        </div>
+
+        <!-- SCENE 4: The Mission -->
+        <div class="scene" id="scene-4">
+          <div id="mission-card">
+            <span class="mission-label">Today's mission</span>
+            <p class="mission-text">"Walk through the philosophy section at the bookshop on Elm St."</p>
+            <div class="mission-meta">
+              <span class="mission-dot"></span>
+              <span>Crafted for you · 8 min away</span>
+            </div>
+          </div>
+          <div class="scene-copy">
+            <h2>Small tasks.<br>Big encounters.</h2>
+          </div>
+        </div>
+
+        <!-- SCENE 5: Convergence -->
+        <div class="scene" id="scene-5">
+          <div id="dots-arena">
+            <div class="dot-person" id="dot-a"></div>
+            <div class="dot-person" id="dot-b"></div>
+            <div id="dot-burst"></div>
+          </div>
+          <div class="scene-copy">
+            <h2>Somewhere nearby,<br>someone is looking for you.</h2>
+            <p>Two people. Two missions. One moment that feels like chance.</p>
+          </div>
+        </div>
+
+        <!-- SCENE 6: The Moment -->
+        <div class="scene" id="scene-6">
+          <div style="text-align:center">
+            <h1 id="s6-title"></h1>
+            <p id="s6-sub">Not by accident. By design.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BELOW FOLD ─────────────────────────────── -->
+    <section id="privacy" class="section-below">
+      <span class="section-label">Privacy by default</span>
+      <h2>Your voice stays yours.</h2>
+      <div class="privacy-grid">
+        <div class="privacy-item">
+          <div class="privacy-icon">🔒</div>
+          <h3>Never leaves your device</h3>
+          <p>All audio processing happens on-device. Nothing is recorded to the cloud. Ever.</p>
+        </div>
+        <div class="privacy-item">
+          <div class="privacy-icon">✦</div>
+          <h3>Patterns, not words</h3>
+          <p>Only a semantic fingerprint of your interests is shared — never your words, conversations, or transcripts.</p>
+        </div>
+        <div class="privacy-item">
+          <div class="privacy-icon">◎</div>
+          <h3>No identity required</h3>
+          <p>You're an anonymous ID. No name, no photo, no profile to manage or perform.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section-below">
+      <div class="section-header">
+        <span class="section-label">How it works</span>
+        <h2>Simple to wear.<br>Remarkable in practice.</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-num">01</div>
+          <h3>On-device AI</h3>
+          <p>Speech-to-text, interest extraction, and embeddings all run locally. No cloud. No latency. No exposure.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">02</div>
+          <h3>Daily missions</h3>
+          <p>Every morning, a small task tailored to who you are. Natural, effortless — it fits your day without disrupting it.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">03</div>
+          <h3>Engineered serendipity</h3>
+          <p>Two people. Complementary missions. They meet without knowing why — and connect because they were meant to.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section-below">
+      <span class="section-label">Early access</span>
+      <h2>Meet who you were<br>meant to meet.</h2>
+      <p class="waitlist-sub">Serendipity is in early development.<br>Drop your email and be the first to know when it's ready.</p>
+      <form id="waitlist-form" class="waitlist-form" novalidate>
+        <div class="waitlist-field">
+          <label class="visually-hidden" for="waitlist-email">Email address</label>
+          <input id="waitlist-email" name="email" class="waitlist-input" type="email" autocomplete="email" placeholder="your@email.com" aria-describedby="waitlist-note waitlist-status" required>
+          <p id="waitlist-note" class="waitlist-note">No spam. One occasional product update. Unsubscribe anytime.</p>
+        </div>
+        <button class="waitlist-btn" type="submit">Request Access</button>
+      </form>
+      <p id="waitlist-status" class="waitlist-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer>
+    <span class="footer-logo">Serendipity</span>
+    <p>© 2026 Serendipity. All rights reserved.</p>
+  </footer>
+
+  <script>
+    'use strict';
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const WAITLIST_ENDPOINT = '';
+
+    function trackEvent(name, payload = {}) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: name, ...payload });
+    }
+
+    // ─── UTILS ──────────────────────────────────────────
+    const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
+    const remap = (x, a, b) => clamp((x - a) / (b - a), 0, 1);
+    const lerp  = (a, b, t) => a + (b - a) * t;
+    const easeOut  = t => 1 - Math.pow(1 - t, 3);
+    const easeInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+
+    function sceneOpacity(p, start, end, fade = 0.04) {
+      if (p < start - fade) return 0;
+      if (p > end   + fade) return 0;
+      if (p >= start && p <= end) return 1;
+      if (p < start) return (p - (start - fade)) / fade;
+      return 1 - (p - end) / fade;
+    }
+
+    // ─── CURSOR ─────────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    let cx = 0, cy = 0, mx = 0, my = 0;
+    const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    const useCustomCursor = !isCoarse && !prefersReducedMotion;
+
+    if (useCustomCursor) {
+      document.body.classList.add('custom-cursor');
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+      document.querySelectorAll('a, button, .feature-card, .nav-cta, .waitlist-btn')
+        .forEach(el => {
+          el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+          el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+      (function animCursor() {
+        if (document.hidden) {
+          requestAnimationFrame(animCursor);
+          return;
+        }
+        cx += (mx - cx) * 0.14;
+        cy += (my - cy) * 0.14;
+        cursor.style.left = cx + 'px';
+        cursor.style.top  = cy + 'px';
+        requestAnimationFrame(animCursor);
+      })();
+    }
+
+    // ─── NAV ────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+    const navCta = document.getElementById('nav-cta');
+    const heroCta = document.getElementById('hero-cta');
+    [navCta, heroCta].forEach(cta => {
+      if (!cta) return;
+      cta.addEventListener('click', evt => {
+        evt.preventDefault();
+        document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
+        trackEvent('cta_click', { source: cta.id || 'unknown' });
+      });
+    });
+
+    // ─── SCENE 1 PARTICLES ──────────────────────────────
+    const s1Container = document.getElementById('s1-particles');
+    const particles = [];
+    if (!prefersReducedMotion) {
+      for (let i = 0; i < 18; i++) {
+        const el = document.createElement('div');
+        el.className = 's1-particle';
+        el.style.cssText = `
+          left:${Math.random()*100}%;
+          top:${Math.random()*100}%;
+          opacity:${0.15 + Math.random()*0.35};
+          width:${3+Math.random()*5}px;
+          height:${3+Math.random()*5}px;
+        `;
+        s1Container.appendChild(el);
+        particles.push({
+          el, x: Math.random()*100, y: Math.random()*100,
+          vx: (Math.random()-0.5)*0.018,
+          vy: (Math.random()-0.5)*0.018,
+        });
+      }
+    }
+    function animParticles() {
+      if (document.hidden || prefersReducedMotion) {
+        requestAnimationFrame(animParticles);
+        return;
+      }
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > 100) p.vx *= -1;
+        if (p.y < 0 || p.y > 100) p.vy *= -1;
+        p.el.style.left = p.x + '%';
+        p.el.style.top  = p.y + '%';
+      });
+      requestAnimationFrame(animParticles);
+    }
+    animParticles();
+
+    // ─── SCENE 3 TAGS ───────────────────────────────────
+    const tagData = [
+      { label: 'rock climbing · 5', x: -26, y: -16 },
+      { label: 'jazz · 4',          x:  -4, y: -27 },
+      { label: 'philosophy · 3',    x:  20, y: -20 },
+      { label: 'photography · 4',   x:  30, y:   0 },
+      { label: 'cooking · 3',       x:  23, y:  18 },
+      { label: 'travel · 5',        x:  -3, y:  27 },
+      { label: 'meditation · 2',    x: -26, y:  17 },
+      { label: 'architecture · 3',  x: -28, y:   1 },
+    ];
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      // Stack in 2 columns for mobile
+      tagData.forEach((t, i) => {
+        t.x = (i % 2 === 0 ? -13 : 13);
+        t.y = (Math.floor(i / 2) * 12) - 18;
+      });
+    }
+    const tagsContainer = document.getElementById('tags-container');
+    const tagEls = tagData.map(t => {
+      const el = document.createElement('div');
+      el.className = 'interest-tag';
+      el.textContent = t.label;
+      tagsContainer.appendChild(el);
+      return el;
+    });
+
+    // ─── SCENE 6 CHARS ──────────────────────────────────
+    const s6Title = document.getElementById('s6-title');
+    const s6Chars = 'Serendipity.'.split('').map(ch => {
+      const span = document.createElement('span');
+      span.textContent = ch;
+      s6Title.appendChild(span);
+      return span;
+    });
+
+    // ─── STORY SCROLL ───────────────────────────────────
+    const storyWrapper = document.getElementById('story-wrapper');
+    const bgWhite      = document.getElementById('bg-white');
+    const bgGrid       = document.getElementById('bg-grid');
+    const scene1       = document.getElementById('scene-1');
+    const scene2       = document.getElementById('scene-2');
+    const scene3       = document.getElementById('scene-3');
+    const scene4       = document.getElementById('scene-4');
+    const scene5       = document.getElementById('scene-5');
+    const scene6       = document.getElementById('scene-6');
+    const deviceCard   = document.getElementById('device-card');
+    const missionCard  = document.getElementById('mission-card');
+    const dotA         = document.getElementById('dot-a');
+    const dotB         = document.getElementById('dot-b');
+    const dotBurst     = document.getElementById('dot-burst');
+    const s6Sub        = document.getElementById('s6-sub');
+
+    const SCENES = [
+      { el: scene1, start: 0.00, end: 0.15 },
+      { el: scene2, start: 0.15, end: 0.30 },
+      { el: scene3, start: 0.30, end: 0.45 },
+      { el: scene4, start: 0.45, end: 0.60 },
+      { el: scene5, start: 0.60, end: 0.80 },
+      { el: scene6, start: 0.80, end: 1.00 },
+    ];
+
+    function getProgress() {
+      const rect = storyWrapper.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      return clamp(-rect.top / scrollable, 0, 1);
+    }
+
+    let mouseMoveX = 0, mouseMoveY = 0;
+    let tiltRX = 0, tiltRY = 0;
+    if (!isCoarse) {
+      document.addEventListener('mousemove', e => {
+        mouseMoveX = e.clientX;
+        mouseMoveY = e.clientY;
+      });
+    }
+
+    function tick() {
+      if (document.hidden) {
+        requestAnimationFrame(tick);
+        return;
+      }
+      const p = getProgress();
+
+      // ── Scene opacities & blur ──────────────────────
+      SCENES.forEach(({ el, start, end }) => {
+        const op = sceneOpacity(p, start, end);
+        el.style.opacity = op;
+        el.style.filter  = !prefersReducedMotion && op < 0.98 && op > 0.02
+          ? `blur(${(1 - op) * 6}px)` : 'none';
+      });
+
+      // ── Background transitions ──────────────────────
+      const toWhite = remap(p, 0.43, 0.54);
+      bgWhite.style.opacity = toWhite;
+      bgGrid.style.opacity  = remap(p, 0.62, 0.68) * (1 - remap(p, 0.78, 0.84)) * 0.55;
+
+      // ── Scene 2: device tilt (mouse-driven, smoothed) ─
+      if (!isCoarse && !prefersReducedMotion) {
+        const rect = deviceCard.getBoundingClientRect();
+        const dcx  = rect.left + rect.width  / 2;
+        const dcy  = rect.top  + rect.height / 2;
+        const targetRY = p >= 0.15 && p <= 0.30
+          ? ((mouseMoveX - dcx) / (window.innerWidth  / 2)) * 7
+          : 0;
+        const targetRX = p >= 0.15 && p <= 0.30
+          ? -((mouseMoveY - dcy) / (window.innerHeight / 2)) * 5
+          : 0;
+        tiltRY += (targetRY - tiltRY) * 0.08;
+        tiltRX += (targetRX - tiltRX) * 0.08;
+        deviceCard.style.transform = `perspective(900px) rotateY(${tiltRY}deg) rotateX(${tiltRX}deg)`;
+      }
+
+      // ── Scene 3: interest tag explosion ─────────────
+      const s3p = remap(p, 0.30, 0.43);
+      tagEls.forEach((el, i) => {
+        const delay  = i * 0.07;
+        const tp     = easeOut(clamp((s3p - delay) / 0.4, 0, 1));
+        const { x, y } = tagData[i];
+        // Tags move from center outward
+        const tx = x * tp;
+        const ty = y * tp;
+        el.style.opacity   = tp;
+        el.style.transform = `translate(calc(-50% + ${tx}vw), calc(-50% + ${ty}vh)) scale(${0.6 + 0.4*tp})`;
+      });
+
+      // ── Scene 4: mission card ────────────────────────
+      const s4p = easeOut(remap(p, 0.46, 0.55));
+      missionCard.style.opacity   = s4p;
+      missionCard.style.transform = `translateY(${(1-s4p)*40}px)`;
+
+      // ── Scene 5: dots convergence ────────────────────
+      const s5p = remap(p, 0.60, 0.76);
+      const dotAx = lerp(0, 120, easeInOut(s5p));
+      const dotBx = lerp(0, -120, easeInOut(s5p));
+      dotA.style.transform = `translateY(-50%) translateX(${dotAx}px)`;
+      dotB.style.transform = `translateY(-50%) translateX(${dotBx}px)`;
+      // Burst at meeting point
+      const burstP = remap(s5p, 0.85, 1.0);
+      const burstScale = burstP * 8;
+      const burstOpacity = burstP > 0 ? Math.max(0, 1 - burstP * 1.2) : 0;
+      dotBurst.style.width   = `${burstScale * 20}px`;
+      dotBurst.style.height  = `${burstScale * 20}px`;
+      dotBurst.style.opacity = burstOpacity;
+      dotBurst.style.transform = `translate(-50%, -50%) scale(1)`;
+
+      // ── Scene 6: character reveal ────────────────────
+      const s6p = remap(p, 0.82, 0.99);
+      s6Chars.forEach((span, i) => {
+        const charDelay = (i / s6Chars.length) * 0.65;
+        const cp = easeOut(clamp((s6p - charDelay) / 0.3, 0, 1));
+        span.style.opacity   = cp;
+        span.style.transform = `translateY(${(1-cp)*24}px)`;
+      });
+      const subP = easeOut(remap(s6p, 0.55, 0.95));
+      s6Sub.style.opacity   = subP;
+      s6Sub.style.transform = `translateY(${(1-subP)*16}px)`;
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // ─── INTERSECTION OBSERVER ──────────────────────────
+    const belowSections = document.querySelectorAll('.section-below');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    belowSections.forEach(s => observer.observe(s));
+
+    // ─── FEATURE CARD TILT ──────────────────────────────
+    if (!isCoarse && !prefersReducedMotion) {
+      document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const cx   = rect.left + rect.width  / 2;
+          const cy   = rect.top  + rect.height / 2;
+          const dx   = (e.clientX - cx) / (rect.width  / 2);
+          const dy   = (e.clientY - cy) / (rect.height / 2);
+          card.style.transform = `perspective(700px) rotateY(${dx*7}deg) rotateX(${-dy*5}deg) translateY(-4px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(700px) rotateY(0) rotateX(0) translateY(0)';
+        });
+      });
+    }
+
+    // ─── WAITLIST SUBMIT ────────────────────────────────
+    async function submitWaitlist(email) {
+      if (!WAITLIST_ENDPOINT) {
+        return { ok: false, reason: 'missing-endpoint' };
+      }
+
+      const response = await fetch(WAITLIST_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      return { ok: response.ok, reason: response.ok ? '' : 'request-failed' };
+    }
+
+    function setWaitlistUiState({ loading, message, tone }) {
+      const status = document.getElementById('waitlist-status');
+      const btn = document.querySelector('#waitlist-form .waitlist-btn');
+      if (!status || !btn) return;
+
+      status.className = `waitlist-status ${tone || ''}`.trim();
+      status.textContent = message || '';
+      btn.disabled = !!loading;
+      btn.textContent = loading ? 'Submitting...' : 'Request Access';
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const input = e.target.querySelector('.waitlist-input');
+      const email = input.value.trim();
+
+      if (!input.checkValidity()) {
+        input.reportValidity();
+        setWaitlistUiState({
+          loading: false,
+          message: 'Please enter a valid email address.',
+          tone: 'error'
+        });
+        return;
+      }
+
+      setWaitlistUiState({ loading: true, message: 'Submitting your request...', tone: 'loading' });
+      trackEvent('waitlist_submit_attempt', { source: 'form' });
+
+      try {
+        const result = await submitWaitlist(email);
+
+        if (result.ok) {
+          e.target.reset();
+          setWaitlistUiState({
+            loading: false,
+            message: 'You are on the list. We will reach out when access opens.',
+            tone: 'success'
+          });
+          trackEvent('waitlist_submit_success', { source: 'endpoint' });
+          return;
+        }
+
+        const localKey = 'serendipity_waitlist_emails';
+        const saved = JSON.parse(localStorage.getItem(localKey) || '[]');
+        if (!saved.includes(email)) {
+          saved.push(email);
+          localStorage.setItem(localKey, JSON.stringify(saved));
+        }
+        e.target.reset();
+        setWaitlistUiState({
+          loading: false,
+          message: 'Saved locally on this device. Set WAITLIST_ENDPOINT in script to send to your backend.',
+          tone: 'success'
+        });
+        trackEvent('waitlist_submit_local_fallback', { source: result.reason || 'unknown' });
+      } catch (error) {
+        setWaitlistUiState({
+          loading: false,
+          message: 'Something went wrong. Please try again in a moment.',
+          tone: 'error'
+        });
+        trackEvent('waitlist_submit_error', { message: String(error) });
+      }
+    }
+
+    const waitlistForm = document.getElementById('waitlist-form');
+    if (waitlistForm) {
+      waitlistForm.addEventListener('submit', handleSubmit);
+    }
+  </script>
+</body>
+</html>
