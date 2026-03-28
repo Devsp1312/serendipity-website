@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serendipity — Meet Who You Were Meant to Meet</title>
-  <meta name="description" content="Serendipity is a privacy-first wearable that helps you discover meaningful people nearby through on-device AI and guided daily missions.">
+  <title>Serendipity — Find Your People</title>
+  <meta name="description" content="Serendipity is a privacy-first wearable that uses on-device AI and daily missions to help you cross paths with like-minded people nearby.">
   <meta name="theme-color" content="#1e3a8a">
-  <meta property="og:title" content="Serendipity — Meet Who You Were Meant to Meet">
-  <meta property="og:description" content="A privacy-first wearable that helps meaningful connections happen naturally.">
+  <meta property="og:title" content="Serendipity — Find Your People">
+  <meta property="og:description" content="A privacy-first wearable that helps you discover like-minded people nearby through on-device AI and guided daily missions.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serendipity.example">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Serendipity — Meet Who You Were Meant to Meet">
-  <meta name="twitter:description" content="A privacy-first wearable that helps meaningful connections happen naturally.">
+  <meta name="twitter:title" content="Serendipity — Find Your People">
+  <meta name="twitter:description" content="A privacy-first wearable that helps you discover like-minded people nearby through on-device AI and guided daily missions.">
   <link rel="canonical" href="https://serendipity.example">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231e3a8a'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2300c1d4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -102,7 +102,8 @@
       background-size: 200px 200px;
     }
     #hero-intro h1 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
       font-size: clamp(2.2rem, 5vw, 4.6rem);
       line-height: 1.1;
       letter-spacing: -0.03em;
@@ -208,7 +209,7 @@
       top: 0; left: 0;
       transform: translate(-50%, -50%);
       will-change: transform;
-      mix-blend-mode: difference;
+      box-shadow: 0 0 0 1.5px rgba(0,0,0,0.12);
       transition: width 0.2s, height 0.2s, background 0.2s;
     }
     #cursor.hover {
@@ -343,7 +344,7 @@
       margin-bottom: 20px;
     }
     #s1-headline {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: clamp(2.4rem, 6vw, 5rem);
       font-weight: 700;
       line-height: 1.12;
@@ -446,7 +447,7 @@
       margin-bottom: 18px;
     }
     #scene-2 .scene-copy h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: clamp(1.8rem, 3.5vw, 3rem);
       font-weight: 700;
       line-height: 1.18;
@@ -473,7 +474,7 @@
       position: relative;
     }
     #scene-3 .scene-copy h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: clamp(1.8rem, 3.5vw, 3rem);
       font-weight: 700;
       letter-spacing: -0.025em;
@@ -510,9 +511,11 @@
     #scene-4 .scene-copy {
       text-align: center;
       color: var(--dark);
+      width: 100%;
+      max-width: 600px;
     }
     #scene-4 .scene-copy h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: clamp(1.8rem, 3.5vw, 3rem);
       font-weight: 700;
       letter-spacing: -0.025em;
@@ -562,46 +565,29 @@
     }
 
     /* ─── SCENE 5 ─────────────────────────────────────── */
-    #scene-5 { flex-direction: column; gap: 48px; }
+    #scene-5 { flex-direction: column; gap: 40px; }
     #scene-5 .scene-copy {
       text-align: center;
       color: var(--dark);
+      width: 100%;
+      max-width: 600px;
     }
     #scene-5 .scene-copy h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: clamp(1.6rem, 3vw, 2.6rem);
       font-weight: 700;
       letter-spacing: -0.025em;
       line-height: 1.22;
     }
-    #dots-arena {
+    #network-arena {
       position: relative;
-      width: 320px;
-      height: 120px;
-      display: flex;
-      align-items: center;
+      width: min(520px, 88vw);
+      height: 240px;
     }
-    .dot-person {
-      position: absolute;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 24px rgba(0,193,212,0.7), 0 0 60px rgba(0,193,212,0.3);
-      top: 50%;
-      transform: translateY(-50%);
-      will-change: transform;
-    }
-    #dot-a { left: 10px; }
-    #dot-b { right: 10px; }
-    #dot-burst {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 0; height: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,193,212,0.5) 0%, transparent 70%);
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-      will-change: transform, opacity;
+    #network-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     #scene-5 .scene-copy p {
       font-size: 1rem;
@@ -610,6 +596,8 @@
       line-height: 1.7;
       margin-top: 12px;
       max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* ─── SCENE 6 ─────────────────────────────────────── */
@@ -1109,8 +1097,8 @@
 
   <main id="main-content">
     <section id="hero-intro" aria-labelledby="hero-title">
-      <h1 id="hero-title">Meet who you were meant to meet.</h1>
-      <p class="hero-sub">Serendipity is a privacy-first wearable that learns your interests on-device, then creates small daily missions that make meaningful encounters feel natural.</p>
+      <h1 id="hero-title">Find the people already in your orbit.</h1>
+      <p class="hero-sub">Serendipity is a privacy-first wearable that learns your interests on-device, then sends you daily missions that help you cross paths with like-minded people — for friendships, collaborations, and community.</p>
       <div class="hero-actions">
         <a class="hero-btn primary" id="hero-cta" href="#waitlist">Request Early Access</a>
         <a class="hero-btn" href="#features">See How It Works</a>
@@ -1160,7 +1148,7 @@
           <div class="scene-copy">
             <span id="s1-eyebrow">Wearable · AI · Private</span>
             <h2 id="s1-headline">You've walked past them<br>a thousand times.</h2>
-            <p id="s1-sub">The people who'd change your life are already around you. You just haven't met them yet.</p>
+            <p id="s1-sub">The friends, collaborators, and community you've been looking for are already around you. You just haven't crossed paths yet.</p>
           </div>
         </div>
 
@@ -1202,21 +1190,18 @@
             </div>
           </div>
           <div class="scene-copy">
-            <h2>Small tasks.<br>Big encounters.</h2>
+            <h2>Small tasks.<br>Real conversations.</h2>
           </div>
         </div>
 
-        <!-- SCENE 5: Convergence -->
+        <!-- SCENE 5: Community Network -->
         <div class="scene" id="scene-5">
-          <div id="dots-arena">
-            <div class="dot-person" id="dot-a"></div>
-            <div class="dot-person" id="dot-b"></div>
-            <div id="dot-burst"></div>
-            <canvas id="burst-canvas" width="320" height="120" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
+          <div id="network-arena">
+            <canvas id="network-canvas"></canvas>
           </div>
           <div class="scene-copy">
-            <h2>Somewhere nearby,<br>someone is looking for you.</h2>
-            <p>Two people. Two missions. One moment that feels like chance.</p>
+            <h2>Somewhere nearby,<br>someone shares your world.</h2>
+            <p>A group of people. Complementary missions. All ending up in the same place.</p>
           </div>
         </div>
 
@@ -1293,14 +1278,14 @@
         <div class="feature-card">
           <div class="feature-num">03</div>
           <h3>Engineered serendipity</h3>
-          <p>Two people. Complementary missions. They meet without knowing why — and connect because they were meant to.</p>
+          <p>Two people. Complementary missions. They end up in the same place — and have a genuine conversation because of it.</p>
         </div>
       </div>
     </section>
 
     <section id="waitlist" class="section-below">
       <span class="section-label">Early access</span>
-      <h2>Meet who you were<br>meant to meet.</h2>
+      <h2>Find the people<br>already in your orbit.</h2>
       <p class="waitlist-sub">Serendipity is in early development.<br>Drop your email and be the first to know when it's ready.</p>
       <form id="waitlist-form" class="waitlist-form" novalidate>
         <div class="waitlist-field">
@@ -1325,7 +1310,7 @@
     </div>
     <div class="footer-bottom">
       <p>© 2026 Serendipity. All rights reserved.</p>
-      <p class="footer-tagline">Meet who you were meant to meet.</p>
+      <p class="footer-tagline">Find your people.</p>
     </div>
   </footer>
 
@@ -1508,10 +1493,31 @@
     const scene6       = document.getElementById('scene-6');
     const deviceCard   = document.getElementById('device-card');
     const missionCard  = document.getElementById('mission-card');
-    const dotA         = document.getElementById('dot-a');
-    const dotB         = document.getElementById('dot-b');
-    const dotBurst     = document.getElementById('dot-burst');
-    const burstCanvas  = document.getElementById('burst-canvas');
+    const netCanvas    = document.getElementById('network-canvas');
+    const netCtx       = netCanvas ? netCanvas.getContext('2d') : null;
+
+    // Community network: hub + 5 outer nodes in a near-hexagonal layout
+    const netDots = [
+      { fx: 0.50, fy: 0.50 }, // center hub
+      { fx: 0.50, fy: 0.10 }, // top
+      { fx: 0.84, fy: 0.30 }, // top-right
+      { fx: 0.76, fy: 0.84 }, // bottom-right
+      { fx: 0.24, fy: 0.84 }, // bottom-left
+      { fx: 0.16, fy: 0.30 }, // top-left
+    ];
+    const netEdges = [
+      [0,1],[0,2],[0,3],[0,4],[0,5], // spokes — drawn first
+      [1,2],[2,3],[3,4],[4,5],[5,1], // outer ring
+    ];
+
+    function resizeNetCanvas() {
+      if (!netCanvas) return;
+      netCanvas.width  = netCanvas.offsetWidth;
+      netCanvas.height = netCanvas.offsetHeight;
+    }
+    resizeNetCanvas();
+    window.addEventListener('resize', resizeNetCanvas, { passive: true });
+
     const s6Sub        = document.getElementById('s6-sub');
     const progressBar  = document.getElementById('story-progress');
     const progressFill = document.getElementById('story-progress-fill');
@@ -1615,38 +1621,90 @@
       missionCard.style.opacity   = s4p;
       missionCard.style.transform = `translateY(${(1-s4p)*40}px) rotate(${(1-s4p)*2.5}deg)`;
 
-      // ── Scene 5: dots convergence ────────────────────
-      const s5p = remap(p, 0.60, 0.76);
-      const dotAx = lerp(0, 120, easeInOut(s5p));
-      const dotBx = lerp(0, -120, easeInOut(s5p));
-      dotA.style.transform = `translateY(-50%) translateX(${dotAx}px)`;
-      dotB.style.transform = `translateY(-50%) translateX(${dotBx}px)`;
-      // Burst at meeting point — soft glow base + canvas ray explosion
-      const burstP = remap(s5p, 0.85, 1.0);
-      const burstOpacity = burstP > 0 ? Math.max(0, 1 - burstP * 1.4) : 0;
-      dotBurst.style.width   = `${burstP * 160}px`;
-      dotBurst.style.height  = `${burstP * 160}px`;
-      dotBurst.style.opacity = burstOpacity;
-      dotBurst.style.transform = `translate(-50%, -50%) scale(1)`;
-      // Canvas ray burst
-      const bCtx = burstCanvas ? burstCanvas.getContext('2d') : null;
-      if (bCtx && !prefersReducedMotion) {
-        bCtx.clearRect(0, 0, 320, 120);
-        if (burstP > 0 && burstP < 1) {
-          const bcx = 160, bcy = 60;
-          const RAY_COUNT = 12;
-          for (let i = 0; i < RAY_COUNT; i++) {
-            const angle  = (i / RAY_COUNT) * Math.PI * 2;
-            const length = burstP * 55;
-            const alpha  = Math.max(0, 0.85 - burstP * 1.1);
-            bCtx.beginPath();
-            bCtx.moveTo(bcx + Math.cos(angle) * 10, bcy + Math.sin(angle) * 10);
-            bCtx.lineTo(bcx + Math.cos(angle) * length, bcy + Math.sin(angle) * length);
-            bCtx.strokeStyle = `rgba(0,193,212,${alpha})`;
-            bCtx.lineWidth = 1.5;
-            bCtx.stroke();
+      // ── Scene 5: community network ───────────────────
+      const s5p = remap(p, 0.60, 0.78);
+      if (netCtx && !prefersReducedMotion) {
+        const W   = netCanvas.width, H = netCanvas.height;
+        const now = performance.now() / 1000;
+        netCtx.clearRect(0, 0, W, H);
+
+        const dotP  = remap(s5p, 0.00, 0.62);
+        const edgeP = remap(s5p, 0.28, 1.00);
+
+        // Compute floating node positions (each has its own drift phase)
+        const nodePos = netDots.map((dot, i) => {
+          const dotStart = i === 0 ? 0 : 0.10 + (i - 1) * 0.10;
+          const t = easeOut(clamp((dotP - dotStart) / 0.28, 0, 1));
+          const ph = i * 1.13;
+          return {
+            x: dot.fx * W + Math.sin(now * 0.65 + ph)        * 4 * t,
+            y: dot.fy * H + Math.cos(now * 0.50 + ph * 1.30) * 4 * t,
+            t,
+          };
+        });
+
+        // Draw edges
+        netEdges.forEach((edge, i) => {
+          const ep = easeOut(clamp((edgeP - i * 0.07) / 0.38, 0, 1));
+          if (ep <= 0) return;
+          const a = nodePos[edge[0]], b = nodePos[edge[1]];
+          if (a.t <= 0 || b.t <= 0) return;
+          const isSpoke = i < 5;
+          const base    = isSpoke ? 0.42 : 0.26;
+          // Pulse opacity once the line is fully drawn
+          const alpha = ep >= 0.99
+            ? base + base * 0.28 * Math.sin(now * 1.3 + i * 0.65)
+            : base * ep;
+          netCtx.beginPath();
+          netCtx.moveTo(a.x, a.y);
+          netCtx.lineTo(a.x + (b.x - a.x) * ep, a.y + (b.y - a.y) * ep);
+          netCtx.strokeStyle = `rgba(0,193,212,${alpha})`;
+          netCtx.lineWidth   = isSpoke ? 1.4 : 1.0;
+          netCtx.stroke();
+        });
+
+        // Draw nodes
+        nodePos.forEach((pos, i) => {
+          const { x, y, t } = pos;
+          if (t <= 0) return;
+          const r = (i === 0 ? 8.5 : 7) * t;
+
+          // Expanding pulse ring on first appearance
+          if (t < 0.97) {
+            netCtx.beginPath();
+            netCtx.arc(x, y, r + t * 22, 0, Math.PI * 2);
+            netCtx.strokeStyle = `rgba(0,193,212,${(1 - t) * 0.55})`;
+            netCtx.lineWidth = 1.5;
+            netCtx.stroke();
           }
-        }
+
+          // Breathing glow halo
+          const glowBase = i === 0 ? 0.30 : 0.22;
+          const glowA = t >= 0.99
+            ? glowBase * (0.82 + 0.18 * Math.sin(now + i * 0.9))
+            : glowBase * t;
+          const g = netCtx.createRadialGradient(x, y, 0, x, y, r * 4.2);
+          g.addColorStop(0, `rgba(0,193,212,${glowA * 1.6})`);
+          g.addColorStop(1, 'rgba(0,193,212,0)');
+          netCtx.beginPath();
+          netCtx.arc(x, y, r * 4.2, 0, Math.PI * 2);
+          netCtx.fillStyle = g;
+          netCtx.fill();
+
+          // Solid dot
+          netCtx.beginPath();
+          netCtx.arc(x, y, r, 0, Math.PI * 2);
+          netCtx.fillStyle = `rgba(0,193,212,${t})`;
+          netCtx.fill();
+
+          // Subtle inner highlight (gloss)
+          if (t > 0.55) {
+            netCtx.beginPath();
+            netCtx.arc(x - r * 0.22, y - r * 0.22, r * 0.32, 0, Math.PI * 2);
+            netCtx.fillStyle = `rgba(255,255,255,${(t - 0.55) * 0.65})`;
+            netCtx.fill();
+          }
+        });
       }
 
       // ── Scene 6: character reveal ────────────────────
