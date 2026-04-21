@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Serendipity works — hardware, pipeline, privacy</title>
+  <meta name="description" content="The full picture: hardware specs, day/night processing pipeline, the app, privacy model, and FAQ for the Serendipity wearable.">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231e3a8a'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2300c1d4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --dark:  #333333;
+      --blue:  #1e3a8a;
+      --cyan:  #00c1d4;
+      --gray:  #e0e0e0;
+      --focus: #0ea5e9;
+      --nav-height: 88px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    section[id], main[id] { scroll-margin-top: calc(var(--nav-height) + 16px); }
+
+    a { cursor: pointer; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--focus); outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute; left: 12px; top: -48px; z-index: 2000;
+      padding: 10px 14px; background: var(--white); color: var(--blue);
+      border: 2px solid var(--focus); border-radius: 10px;
+      text-decoration: none; font-weight: 600;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus-visible { top: 12px; }
+
+    /* ─── NAV ────────────────────────────────────── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 22px 48px; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--gray);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--blue); text-decoration: none; letter-spacing: -0.02em;
+      display: inline-flex; align-items: center; gap: 8px;
+      min-width: 0;
+    }
+    .nav-logo .back-arrow {
+      display: inline-block; color: var(--cyan);
+      font-family: 'Inter', sans-serif; font-weight: 500;
+    }
+    .nav-cta {
+      background: var(--cyan); color: var(--white); border: none;
+      padding: 10px 26px; border-radius: 100px;
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,193,212,0.45); }
+    @media (max-width: 600px) {
+      :root { --nav-height: 72px; }
+      #nav { padding: 18px 24px; gap: 12px; }
+      .nav-logo { font-size: 1.08rem; }
+      .nav-cta { padding: 10px 18px; font-size: 0.8rem; }
+    }
+    @media (max-width: 380px) {
+      #nav { padding: 14px 16px; }
+      .nav-logo { font-size: 1rem; gap: 6px; }
+      .nav-cta { padding: 9px 14px; font-size: 0.78rem; }
+    }
+    @media (max-width: 480px) {
+      #nav { padding: 14px 16px; gap: 8px; }
+      .nav-cta {
+        padding: 9px 12px;
+        font-size: 0;
+      }
+      .nav-cta::before {
+        content: 'Reserve';
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+    }
+
+    /* ─── PAGE HERO ──────────────────────────────── */
+    .page-hero {
+      padding: 140px 48px 72px;
+      text-align: center;
+      background:
+        radial-gradient(800px 300px at 50% 0%, rgba(0,193,212,0.08), transparent 60%),
+        var(--white);
+      border-bottom: 1px solid var(--gray);
+    }
+    .page-hero span.label {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cyan);
+      display: block; margin-bottom: 18px;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.6rem);
+      font-weight: 700; color: var(--blue);
+      letter-spacing: -0.03em; line-height: 1.12;
+      margin-bottom: 18px;
+      max-width: 11ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .page-hero p {
+      max-width: 640px; margin: 0 auto;
+      font-size: 1.05rem; font-weight: 300;
+      color: #666; line-height: 1.7;
+    }
+    @media (max-width: 600px) {
+      .page-hero { padding: 104px 20px 52px; }
+      .page-hero h1 { font-size: clamp(2rem, 10vw, 3rem); }
+      .page-hero p { font-size: 1rem; }
+    }
+
+    /* ─── SHARED SECTION ─────────────────────────── */
+    .section {
+      padding: 100px 48px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; color: var(--blue);
+      letter-spacing: -0.03em; line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .section .lead {
+      font-size: 1.02rem; color: #666;
+      line-height: 1.7; margin-bottom: 40px;
+      max-width: 680px;
+    }
+    .section-label {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cyan);
+      display: block; margin-bottom: 16px;
+    }
+    .title-break { display: inline; }
+    @media (max-width: 600px) { .section { padding: 72px 24px; } }
+
+    /* ─── HARDWARE ───────────────────────────────── */
+    .hardware-images {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px; margin-bottom: 48px;
+    }
+    .hw-image-wrap {
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,193,212,0.12), transparent 60%),
+        #f5f8ff;
+      border: 1px solid var(--gray);
+      border-radius: 24px;
+      padding: 32px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 320px;
+    }
+    .hw-image-wrap img {
+      max-width: 100%; max-height: 320px;
+      filter: drop-shadow(0 20px 40px rgba(30,58,138,0.18));
+    }
+    .hw-specs {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px 32px;
+      padding: 32px;
+      background: #fafbff;
+      border: 1px solid var(--gray);
+      border-radius: 20px;
+    }
+    .hw-specs li {
+      list-style: none;
+      font-size: 0.95rem;
+      color: #444;
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .hw-specs li::before {
+      content: ''; position: absolute;
+      left: 0; top: 9px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--cyan);
+    }
+    .hw-note {
+      margin-top: 24px; padding: 18px 22px;
+      background: rgba(0,193,212,0.06);
+      border-left: 3px solid var(--cyan);
+      border-radius: 8px;
+      font-style: italic; color: #555;
+      font-size: 0.95rem; line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .hardware-images { grid-template-columns: 1fr; }
+      .hw-specs { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hw-image-wrap {
+        min-height: 240px;
+        padding: 22px;
+        border-radius: 20px;
+      }
+      .hw-image-wrap img { max-height: 240px; }
+      .hw-specs { padding: 24px 20px; gap: 12px 18px; }
+    }
+
+    /* ─── TIMELINE (Day with Serendipity) ────────── */
+    #timeline { background: var(--blue); }
+    #timeline .inner { max-width: 1100px; margin: 0 auto; padding: 100px 48px; }
+    #timeline h2 { color: var(--white); }
+    #timeline .lead { color: rgba(255,255,255,0.65); }
+    #timeline .section-label { color: var(--cyan); }
+    .timeline-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .timeline-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .timeline-card:hover {
+      border-color: rgba(0,193,212,0.5);
+      transform: translateY(-3px);
+    }
+    .timeline-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 700;
+      color: var(--cyan);
+      line-height: 1; margin-bottom: 14px;
+    }
+    .timeline-card h3 {
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--white); margin-bottom: 12px;
+    }
+    .timeline-card p {
+      font-size: 0.92rem; font-weight: 300;
+      color: rgba(255,255,255,0.7); line-height: 1.7;
+    }
+    @media (max-width: 768px) {
+      #timeline .inner { padding: 80px 24px; }
+      .timeline-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      #timeline .inner { padding: 72px 20px; }
+      .timeline-card { padding: 28px 22px; }
+    }
+
+    /* ─── APP ─────────────────────────────────────── */
+    #app .chips {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-top: 28px; margin-bottom: 28px;
+    }
+    #app .chip {
+      padding: 10px 18px;
+      border-radius: 100px;
+      background: #f5f8ff;
+      border: 1px solid var(--gray);
+      font-size: 0.9rem; color: var(--blue);
+      font-weight: 500;
+    }
+    #app .footnote {
+      font-size: 0.92rem; color: #666;
+      line-height: 1.7; max-width: 720px;
+      padding-left: 18px;
+      border-left: 3px solid var(--cyan);
+    }
+    @media (max-width: 600px) {
+      #app .chips { flex-direction: column; align-items: stretch; }
+      #app .chip {
+        width: 100%;
+        text-align: center;
+        padding: 12px 16px;
+      }
+    }
+
+    /* ─── IDENTITY ───────────────────────────────── */
+    #identity {
+      background:
+        radial-gradient(600px 300px at 50% 10%, rgba(0,193,212,0.08), transparent 60%),
+        #fafbff;
+    }
+    #identity .inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 100px 48px;
+      display: grid; grid-template-columns: 0.8fr 1.2fr;
+      gap: 56px; align-items: center;
+    }
+    #identity img {
+      width: 100%; max-width: 260px; height: auto;
+      filter: drop-shadow(0 20px 40px rgba(30,58,138,0.25));
+      justify-self: center;
+    }
+    #identity ul { list-style: none; margin-top: 22px; }
+    #identity li {
+      position: relative; padding-left: 26px; margin-bottom: 14px;
+      font-size: 0.98rem; color: #444; line-height: 1.6;
+    }
+    #identity li::before {
+      content: '✓';
+      position: absolute; left: 0; top: 0;
+      color: var(--cyan); font-weight: 700;
+    }
+    @media (max-width: 768px) {
+      #identity .inner { padding: 80px 24px; grid-template-columns: 1fr; }
+      #identity img { max-width: 180px; }
+    }
+    @media (max-width: 600px) {
+      #identity .inner { padding: 72px 20px; gap: 32px; }
+    }
+
+    /* ─── FAQ ─────────────────────────────────────── */
+    #faq { background: var(--white); }
+    .faq-list {
+      max-width: 760px; margin: 32px auto 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--gray);
+      padding: 18px 0;
+    }
+    .faq-item summary {
+      font-size: 1.02rem; font-weight: 600;
+      color: var(--blue);
+      cursor: pointer;
+      list-style: none;
+      padding: 8px 36px 8px 0;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: '+';
+      position: absolute; right: 8px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--cyan);
+      font-size: 1.4rem; font-weight: 400;
+      transition: transform 0.3s ease;
+    }
+    .faq-item[open] summary::after {
+      content: '–';
+    }
+    .faq-item summary:hover { color: var(--cyan); }
+    .faq-item p {
+      margin-top: 12px; padding: 0 0 8px;
+      font-size: 0.95rem; color: #555;
+      line-height: 1.7;
+    }
+
+    /* ─── BOTTOM CTA ──────────────────────────────── */
+    #bottom-cta {
+      background: linear-gradient(160deg, #102b75 0%, #1a3485 40%, #0f2060 100%);
+      text-align: center;
+      padding: 100px 48px;
+    }
+    #bottom-cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 700; color: var(--white);
+      letter-spacing: -0.03em; line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    #bottom-cta p {
+      color: rgba(255,255,255,0.65);
+      max-width: 500px; margin: 0 auto 32px;
+      font-size: 1rem; line-height: 1.7;
+    }
+    #bottom-cta .big-btn {
+      display: inline-block;
+      background: var(--cyan); color: var(--white);
+      padding: 16px 40px; border-radius: 100px;
+      font-size: 0.95rem; font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    #bottom-cta .big-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,193,212,0.5);
+    }
+    @media (max-width: 600px) {
+      #bottom-cta { padding: 80px 24px; }
+      #bottom-cta .big-btn { width: 100%; max-width: 320px; }
+      .title-break { display: none; }
+    }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      background: var(--white);
+      border-top: 1px solid var(--gray);
+      padding: 48px 48px 32px;
+    }
+    .footer-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px; padding-bottom: 32px;
+      border-bottom: 1px solid var(--gray);
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--blue); letter-spacing: -0.02em;
+    }
+    .footer-nav { display: flex; gap: 32px; }
+    .footer-nav a {
+      font-size: 0.88rem; font-weight: 500;
+      color: #888; text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-nav a:hover { color: var(--blue); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    footer p { font-size: 0.8rem; color: #aaa; }
+    .footer-tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: rgba(30,58,138,0.35) !important;
+    }
+    @media (max-width: 600px) {
+      footer { padding: 36px 24px 28px; }
+      .footer-top { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .footer-nav { gap: 20px; flex-wrap: wrap; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav id="nav">
+    <a href="index.html" class="nav-logo"><span class="back-arrow">←</span> Serendipity</a>
+    <a class="nav-cta" href="index.html#waitlist">Reserve my spot</a>
+  </nav>
+
+  <main id="main">
+
+    <!-- ─── PAGE HERO ─── -->
+    <section class="page-hero">
+      <span class="label">How it works</span>
+      <h1>How Serendipity actually works.</h1>
+      <p>No buzzwords. Here's the whole thing — hardware, software, privacy, and what you actually see every day.</p>
+    </section>
+
+    <!-- ─── HARDWARE ─── -->
+    <section class="section" id="hardware">
+      <span class="section-label">The hardware</span>
+      <h2>A small wearable that <br class="title-break">quietly does a lot.</h2>
+      <p class="lead">Built to be worn all day. The e-ink face shows a fresh QR code each morning — your bridge between the device and the app — and only costs power when it updates.</p>
+
+      <div class="hardware-images">
+        <div class="hw-image-wrap">
+          <img src="neckless.png" alt="Front view of Serendipity wearable showing QR code on e-ink display" loading="lazy">
+        </div>
+        <div class="hw-image-wrap">
+          <img src="side neckless.png" alt="Side angle view of Serendipity wearable showing its depth and chain" loading="lazy">
+        </div>
+      </div>
+
+      <ul class="hw-specs">
+        <li>Raspberry Pi 5 (16GB RAM, RP3A0 compute module)</li>
+        <li>Microphone for ambient audio capture</li>
+        <li>E-ink display — fresh QR code each morning</li>
+        <li>Meander-line antenna</li>
+        <li>LiPo battery — all-day wear</li>
+        <li>Translucent side window</li>
+        <li>Physical mute button — mutes mic and shows muted icon on e-ink</li>
+        <li>On-device processing — nothing sent to any cloud</li>
+      </ul>
+
+      <div class="hw-note">E-ink only draws power when the screen updates. Your QR costs almost nothing to display all day — the battery goes where it matters.</div>
+    </section>
+
+    <!-- ─── TIMELINE ─── -->
+    <section id="timeline">
+      <div class="inner">
+        <span class="section-label">A day with Serendipity</span>
+        <h2>Daytime. Overnight. Morning.</h2>
+        <p class="lead">One loop, repeated every 24 hours. No subscriptions fired in the background, no app chirping at you — just a quiet rhythm that gets smarter every day.</p>
+
+        <div class="timeline-grid">
+          <div class="timeline-card">
+            <div class="timeline-num">01</div>
+            <h3>Daytime — Listen.</h3>
+            <p>The wearable passively records ambient audio while you go about your day. Press mute anytime — private conversation, sensitive meeting, whatever. The system never tries to identify who's speaking. It only cares about topics.</p>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-num">02</div>
+            <h3>Overnight — Think.</h3>
+            <p>On the charger: noise removal → faster-whisper transcription (~5 min per hour of audio) → gemma2:2b pulls out interest topics → sentence-transformer embeddings → your interest profile updates. All on-device. Raw audio older than 2 days is auto-deleted. Short sleep? Yesterday's profile carries over.</p>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-num">03</div>
+            <h3>Morning — Nudge.</h3>
+            <p>The e-ink updates with a fresh QR code. Scan it with the app to sync your profile, then get 4–5 personalized, time-aware suggestions for the day. Thumbs up, mark done, leave feedback — the feed refines itself over time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── THE APP ─── -->
+    <section class="section" id="app">
+      <span class="section-label">The app</span>
+      <h2>Your feed is just for you. <br class="title-break">It never shows other people.</h2>
+      <p class="lead">No profiles to scroll, no matches to swipe on, no DMs to ignore. The app shows you 4–5 practical, time-aware task suggestions a day — things that happen to put you where people who share your interests will also be.</p>
+
+      <div class="chips">
+        <div class="chip">Try rock climbing this weekend</div>
+        <div class="chip">Check out this coffee shop Friday evening</div>
+        <div class="chip">Wear red today and smile at others doing the same</div>
+      </div>
+
+      <p class="footnote">Under the hood, a FastAPI backend uses cosine similarity to group people with overlapping interests, then generates a task that naturally puts them in the same place. They don't know they were matched. They just got a suggestion they liked.</p>
+    </section>
+
+    <!-- ─── IDENTITY ─── -->
+    <section id="identity">
+      <div class="inner">
+        <img src="shield.png" alt="Shield representing Serendipity's anonymous identity model" loading="lazy">
+        <div>
+          <span class="section-label">Identity &amp; privacy</span>
+          <h2>Anonymous by design.</h2>
+          <p class="lead">There's no "account" to create. When you first open the app it generates a random token. That's your identity — and it's the only thing the system knows about you.</p>
+          <ul>
+            <li>No email, no name, no profile, no password.</li>
+            <li>Your device ID links to the token — never to a real identity.</li>
+            <li>Lose your device? Start fresh. Nothing to recover, nothing to leak.</li>
+            <li>The system only ever knows user1, user2, user3 — never who those people actually are.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FAQ ─── -->
+    <section class="section" id="faq">
+      <span class="section-label">FAQ</span>
+      <h2>Questions people ask.</h2>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Does it record everything I say?</summary>
+          <p>It records ambient audio during the day, but only to extract topic patterns overnight. Raw audio is auto-deleted after 2 days. You can mute the microphone at any time with a physical button — and when you do, a muted-mic icon appears on the e-ink display so it's visible to you and anyone nearby.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if I forget to charge it?</summary>
+          <p>If processing doesn't complete (short sleep, no charge), the wearable carries over your previous day's interest profile. You record the new day normally and processing catches up the next night.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will other people see my profile?</summary>
+          <p>No. The app never shows other users at all. You only see task suggestions for yourself — suggestions happen to overlap with other people's because the matching engine quietly groups similar profiles.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How are matches made without identifying me?</summary>
+          <p>Your interest topics become embeddings (numeric fingerprints). The backend uses cosine similarity to find overlap between anonymous tokens — user1, user2, user3, etc. When four tokens share a strong interest, it generates a task that puts them in the same place. No names, no identities, ever.</p>
+        </details>
+        <details class="faq-item">
+          <summary>When will it ship?</summary>
+          <p>Honestly — we're gauging interest right now. No ship date committed. The waitlist exists so we can find out if this is worth building and what people would actually pay for. That's why the optional price and reason questions on the signup form matter to us.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ─── BOTTOM CTA ─── -->
+    <section id="bottom-cta">
+      <h2>Think you'd wear it?</h2>
+      <p>We're trying to figure out if this is worth building. Reserve your spot and help us decide.</p>
+      <a class="big-btn" href="index.html#waitlist">Reserve my spot →</a>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-top">
+      <span class="footer-logo">Serendipity</span>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="index.html">Home</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#faq">FAQ</a>
+        <a href="index.html#waitlist">Join waitlist</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Serendipity. All rights reserved.</p>
+      <p class="footer-tagline">Wear it. Forget it. Meet your people.</p>
+    </div>
+  </footer>
+</body>
+</html>
