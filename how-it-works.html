@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>How Serendipity works — hardware, pipeline, privacy</title>
-  <meta name="description" content="The full picture: hardware specs, day/night processing pipeline, the app, privacy model, and FAQ for the Serendipity wearable.">
+  <meta name="description" content="The full picture: hardware specs, day/night processing pipeline, the app, privacy design, and FAQ for the Serendipity wearable.">
   <meta name="theme-color" content="#1e3a8a">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231e3a8a'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2300c1d4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -483,7 +483,6 @@
         <li>Raspberry Pi 5 (16GB RAM, RP3A0 compute module)</li>
         <li>Microphone for ambient audio capture</li>
         <li>E-ink display — fresh QR code each morning</li>
-        <li>Meander-line antenna</li>
         <li>LiPo battery — all-day wear</li>
         <li>Translucent side window</li>
         <li>Physical mute button — mutes mic and shows muted icon on e-ink</li>
@@ -504,17 +503,17 @@
           <div class="timeline-card">
             <div class="timeline-num">01</div>
             <h3>Daytime — Listen.</h3>
-            <p>The wearable passively records ambient audio while you go about your day. Press mute anytime — private conversation, sensitive meeting, whatever. The system never tries to identify who's speaking. It only cares about topics.</p>
+            <p>The wearable passively records ambient audio while you go about your day. Press mute anytime — private conversation, sensitive meeting, whatever. It only cares about topics.</p>
           </div>
           <div class="timeline-card">
             <div class="timeline-num">02</div>
             <h3>Overnight — Think.</h3>
-            <p>On the charger: noise removal → faster-whisper transcription (~5 min per hour of audio) → gemma2:2b pulls out interest topics → sentence-transformer embeddings → your interest profile updates. All on-device. Raw audio older than 2 days is auto-deleted. Short sleep? Yesterday's profile carries over.</p>
+            <p>When plugged in, your system cleans up the audio, converts it to text, and extracts key topics. These are turned into embeddings that refine your interests and update your profile, all while keeping the data on your local hardware. Old recordings are automatically cleared out, and your profile remains consistent even if you don't sleep for a full night.</p>
           </div>
           <div class="timeline-card">
             <div class="timeline-num">03</div>
             <h3>Morning — Nudge.</h3>
-            <p>The e-ink updates with a fresh QR code. Scan it with the app to sync your profile, then get 4–5 personalized, time-aware suggestions for the day. Thumbs up, mark done, leave feedback — the feed refines itself over time.</p>
+            <p>The e-ink updates with a fresh QR code. Scan it with the app to sync your profile, then get 4–5 personalized, time-aware suggestions for the day. Thumbs up, mark done, leave feedback — your suggestions get sharper over time.</p>
           </div>
         </div>
       </div>
@@ -523,7 +522,7 @@
     <!-- ─── THE APP ─── -->
     <section class="section" id="app">
       <span class="section-label">The app</span>
-      <h2>Your feed is just for you. <br class="title-break">It never shows other people.</h2>
+      <h2>Your suggestions are just for you. <br class="title-break">Your suggestions are only yours.</h2>
       <p class="lead">No profiles to scroll, no matches to swipe on, no DMs to ignore. The app shows you 4–5 practical, time-aware task suggestions a day — things that happen to put you where people who share your interests will also be.</p>
 
       <div class="chips">
@@ -538,7 +537,7 @@
     <!-- ─── IDENTITY ─── -->
     <section id="identity">
       <div class="inner">
-        <img src="shield.png" alt="Shield representing Serendipity's anonymous identity model" loading="lazy">
+        <img src="shield.png" alt="Shield representing Serendipity's anonymous identity system" loading="lazy">
         <div>
           <span class="section-label">Identity &amp; privacy</span>
           <h2>Anonymous by design.</h2>
